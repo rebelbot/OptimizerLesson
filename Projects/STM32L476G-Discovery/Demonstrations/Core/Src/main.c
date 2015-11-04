@@ -175,8 +175,10 @@ void thrIsrLED(void const *argument) {
 	
   for (;;) {
     osSignalWait(0x0001, osWaitForever);
-		
-#if (defined LAB3)	| (defined LAB4) | (defined LAB5)
+#if (defined LAB0)
+		BSP_LCD_GLASS_Clear();
+		BSP_LCD_GLASS_DisplayString("Sel");		
+#elif (defined LAB3)	| (defined LAB4) | (defined LAB5)
 		
 		//1. Get sample and calculate the magnitude
 		BSP_GYRO_GetXYZ(GyroBuffer); 
