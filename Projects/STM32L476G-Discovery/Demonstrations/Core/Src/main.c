@@ -53,7 +53,7 @@ SlidingWindow16 average_gyro;
 int16_t windowbuffer[AVERAGE_WINDOW_SIZE];
 #endif
 	
-#if (defined LAB2) | (defined LAB3)	| (defined LAB4) | (defined LAB5)
+#if (defined LAB2) | (defined LAB2B) | (defined LAB3)	| (defined LAB4) | (defined LAB5)
 	#define LED5_PROFILE__START BSP_LED_On(LED5)
 	#define LED5_PROFILE__STOP BSP_LED_Off(LED5)
 #endif 
@@ -155,10 +155,10 @@ static void thrMain(void const * argument);
 #endif
 
 void thrIsrLED(void const *argument) {
-#if (defined LAB2) | (defined LAB3) | (defined LAB4) | (defined LAB5)
+#if (defined LAB2)  | (defined LAB2B) | (defined LAB3) | (defined LAB4) | (defined LAB5)
 	uint8_t strbuff[20];
 #endif
-#ifdef LAB2	
+#if  (defined LAB2)	 | (defined LAB2B)
 		static int count =0;
 #elif (defined LAB4) | (defined LAB5)
 	//locally defined in task
@@ -198,21 +198,43 @@ void thrIsrLED(void const *argument) {
 		sprintf((char *)strbuff, "%d", ave);
 		BSP_LCD_GLASS_DisplayString((uint8_t *)strbuff);
 		
-#elif LAB2		
+#elif (defined LAB2) | (defined LAB2B)		
 		//Print result on screen
+		
+#ifdef LAB2B	
+		//Pulse 1 of 3 completed	
+		BSP_LED_Toggle(LED5);
+#endif
+
 		/* Clear the LCD GLASS */
 		BSP_LCD_GLASS_Clear();
 		
+#ifdef LAB2B
+		//Start Pulse 2 of 3
+		BSP_LED_Toggle(LED5);
+#endif
+
 		/* Get the current menu */
 		sprintf((char *)strbuff, "%d", ++count);
+		
+#ifdef LAB2B
+		//Pulse 2 of 3 completed	
+		BSP_LED_Toggle(LED5);
+#endif		
 		BSP_LCD_GLASS_DisplayString((uint8_t *)strbuff);
+#endif
+
+#ifdef LAB2B
+		//Start pulse 3
+		BSP_LED_Toggle(LED5); //Extra toggle to see match down to low and see overhead of Toggle
 #endif
 
 //Toggle LED for profiling		
 #ifdef LAB1		
 		/* Toggle LED5 */
 		BSP_LED_Toggle(LED5);
-#elif  (defined LAB2) | (defined LAB3) | (defined LAB4) | (defined LAB5)
+#elif  (defined LAB2)  | (defined LAB2B) | (defined LAB3) | (defined LAB4) | (defined LAB5)
+		//Ending last pulse of measurement
     LED5_PROFILE__STOP;
 #endif
   }
@@ -227,7 +249,7 @@ void thrIsrLED(void const *argument) {
  */
 void thrLED(void const *argument) 
 {
-#if (defined LAB0) | (defined LAB1) | (defined LAB2)	
+#if (defined LAB0) | (defined LAB1)
 	int count= 0;
 #endif
 
@@ -545,7 +567,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if (GPIO_Pin == SEL_JOY_PIN)
   {
 		//Turn on LED to profile delay time in task
-#if (defined LAB2) | (defined LAB3)	| (defined LAB4) | (defined LAB5)
+#if (defined LAB2) | (defined LAB2B) |  (defined LAB3)	| (defined LAB4) | (defined LAB5)
 		LED5_PROFILE__START;
 #endif
 		
